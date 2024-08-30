@@ -1,8 +1,89 @@
-<!DOCKTYPE html>
-<html>
+<html lang="ja">
   <head>
     <title>neco tube v1 - home</title>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./style/index.css">
   </head>
+
+  <body>
+    <h1>neco-tube v1</h1>
+    <div>
+      <input id="url" type=text placeholder="URLを入力してください" size="30">
+      <br>
+      <select id="quolity">
+        <option value="nothing">画質を選択</option>
+        <option value="1080p">1080p</option>
+        <option value="720p">720p</option>
+        <option value="480p">480p</option>
+        <option value="360p">360p</option>
+        <option value="240p">240p</option>
+        <option value="144p">144p</option>
+      </select>
+      <select id="filetype">
+        <option value="nothing">ファイルタイプを選択</option>
+        <option value="mp4">mp4</option>
+        <option value="webm">webm</option>
+        <option value="m4a">m4a</option>
+      </select>
+      <button id="downloadButton">動画をダウンロード</button>
+      <br>
+      <label id="error"></label>
+      <br>
+      <a href="" id="link">URL</a>
+    </div>
+    
+    <script>
+        document.getElementById('downloadButton').addEventListener('click', () => {
+          const quolity = document.getElementById('quolity');
+          const filetype = document.getElementById('filetype');
+          
+          try {
+            const error = document.getElementById('error');
+            if (quolity.value = "nothing") {
+              if(filetype.value = "nothing") {
+                error.innertext = "画質とファイルタイプを選択してください";  
+                throw new error;
+              }else{
+                error.innertext = "画質を選択してください";
+                throw new error;
+              }
+            }else{
+              error.inner = "";
+            }
+          } catch (error) {
+            console.error(error);  
+          }
+          
+          const url = document.getElementById('url').value;
+          if (!url) {
+            alert('URLを入力してください');
+            return;
+          }
+          try{
+            console.log("fetch");
+            fetch(`/dl?url=${url}`)
+
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('ネットワークエラー: ' + response.statusText);
+                }
+                return response.blob();
+            })
+            .then(text => {
+              console.log(text);
+              const link = document.getElementById('link');
+              link.href = URL.createObjectURL(text);
+            })
+            .catch(error => {
+              console.error('エラー:', error)
+              alert('動画の取得に失敗しました。URLを確認してください。');
+            });
+          }catch(error){
+            console.log(`エラー:${error}`);
+            alert(`エラー:${error}`);
+          }
+        });
+    </script>
+  </body>
 </html>
